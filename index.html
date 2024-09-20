@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Texas Map with GeoJSON Layers</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+        height: 1000px;
+        width: 100%;
+    }
+  </style>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+   crossorigin=""/>
+   
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+   crossorigin=""></script>
+</head>
+<body>
+
+  <div id="map"></div>
+
+  <script>
+    // Initialize the map
+    var map = L.map('map').setView([30, -99], 6); // Lat/Lng for Texas
+
+    // Add a tile layer to the map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Define a function to load GeoJSON files
+    function addGeoJSON(fileName, style) {
+      fetch(fileName)
+        .then(response => response.json())
+        .then(data => {
+          L.geoJSON(data, { style: style }).addTo(map);
+        })
+        .catch(error => console.error('Error loading the GeoJSON file:', error));
+    }
+
+    // Add the GeoJSON files
+    addGeoJSON('gis_data/tx_state.geojson', {color: "blue", weight: 2});
+    addGeoJSON('gis_data/tx_counties.geojson', {color: "green", weight: 1});
+    addGeoJSON('gis_data/tx_counties_100k.geojson', {color: "red", weight: 2});
+    addGeoJSON('gis_data/tx_cities_100k.geojson', {color: "orange", weight: 1});
+  </script>
+
+</body>
+</html>
